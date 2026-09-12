@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+apt-check(){
+    echo -e "${BOLD}${GREEN}APT CHECK${NC}"
+    sudo nala update
+    PACKAGES=$(apt list --upgradable 2>/dev/null | grep -c upgradable||true)
+    if [ "$PACKAGES" -gt 0 ]; then
+        notify-send -a "uppy" "$PACKAGES packages can be upgraded" & sudo nala full-upgrade
+    else
+        notify-send -a "uppy" "No packages to upgrade"
+    fi
+    echo -e "\n${BOLD}${GREEN}CLEANUP${NC}"
+    sudo nala clean
+}
+
+flatpak-check(){
+    echo -e "\n${BOLD}${BLUE}FLATPAK CHECK${NC}"
+    flatpak update -y
+    echo -e "\n${BOLD}${BLUE}CLEANUP${NC}"
+    flatpak uninstall --unused -y
+}
+
+
+apt-check
+flatpak-check
+notify-send -a "uppy" "Update completed :)"
