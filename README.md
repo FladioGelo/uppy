@@ -9,6 +9,11 @@ Just a script to update your debian system with minimal manual intervention.
 Download the latest release from the [Releases](https://github.com/FladioGelo/uppy/releases) page and install it
 
 ### Manual installation
+Dependencies
+
+```bash
+apt install nala libnotify-bin flatpak
+```
 
 Clone the repo and copy the script into a directory in your `PATH`:
 
