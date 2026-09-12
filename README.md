@@ -2,6 +2,14 @@
 
 Just a script to update your debian system with minimal manual intervention.
 
+## Features
+
+- **Notifcations** - let the updates in background, you will notitified for your intervention
+- **Nala** - cool frontend for apt, still apt under the hood
+- **Flatpak** - update your system and flatpak in one command
+
+
+
 ## Installation
 
 ### From release (.deb package)
