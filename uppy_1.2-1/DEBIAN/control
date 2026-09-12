@@ -1,0 +1,9 @@
+Package: uppy
+Version: 1.2-1
+Section: utils
+Priority: optional
+Architecture: all
+Depends: nala, flatpak, libnotify-bin
+Maintainer: Fladio https://github.com/FladioGelo
+Description: Just a script to update your system with minimal manual intervention,
+ (use nala wrapper in front of apt)
