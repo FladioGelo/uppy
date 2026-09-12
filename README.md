@@ -1,6 +1,7 @@
 # uppy
 
 Just a script to update your debian system with minimal manual intervention.
+Nothing homemade, just the commands you now 
 
 ## Features
 
