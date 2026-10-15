@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+G=$'\e[1;32m' B=$'\e[1;34m' N=$'\e[0m'
+
+pm=nala pkg=0 fp=0
+while getopts naf opt; do
+    case $opt in
+        n) pm=nala pkg=1 ;;
+        a) pm=apt  pkg=1 ;;
+        f) fp=1 ;;
+        *) echo "Uso: ${0##*/} [-n|-a] [-f]" >&2; exit 1 ;;
+    esac
+done
+if ((pkg == 0 && fp == 0)); then
+    pkg=1
+    fp=1
+fi
+
+pkg_update() {
+    printf '\n%sAPT CHECK%s\n' "$G" "$N"
+    sudo "$pm" update
+    local n
+    n=$(apt list --upgradable 2>/dev/null | grep -c upgradable || true)
+    if ((n)); then
+        notify-send -a uppy "$n packages can be upgraded" & sudo "$pm" full-upgrade
+    else
+        notify-send -a uppy "No packages to upgrade"
+    fi
+    printf '\n%sCLEANUP%s\n' "$G" "$N"
+    sudo "$pm" clean
+}
+
+flatpak_update() {
+    printf '\n%sFLATPAK CHECK%s\n' "$B" "$N"
+    flatpak update -y
+    printf '\n%sCLEANUP%s\n' "$B" "$N"
+    sudo -n true 2>/dev/null || notify-send -a uppy "sudo: a password is required"
+    sudo flatpak uninstall --unused -y
+}
+
+if ((pkg)); then pkg_update; fi
+if ((fp)); then flatpak_update; fi
+notify-send -a uppy "Update completed :)"
