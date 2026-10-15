@@ -29,8 +29,7 @@ Clone the repo and copy the script into a directory in your `PATH`:
 
 ```bash
 git clone https://github.com/FladioGelo/uppy.git
-cd uppy
-sudo cp uppy /usr/local/bin/
+sudo cp uppy_*/usr/bin/uppy /usr/local/bin/
 sudo chmod +x /usr/local/bin/uppy
 ```
 
