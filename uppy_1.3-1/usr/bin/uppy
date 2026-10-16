@@ -4,12 +4,20 @@ set -eo pipefail
 G=$'\e[1;32m' B=$'\e[1;34m' N=$'\e[0m'
 
 pm=nala pkg=0 fp=0
-while getopts naf opt; do
+while getopts nafh opt; do
     case $opt in
         n) pm=nala pkg=1 ;;
         a) pm=apt  pkg=1 ;;
         f) fp=1 ;;
-        *) echo "Uso: ${0##*/} [-n|-a] [-f]" >&2; exit 1 ;;
+        h|*) echo "Usage: ${0##*/} [-n|-a] [-f] [-h]
+
+        Options:
+          -n    use nala for system packages (default)
+          -a    use apt for system packages
+          -f    update Flatpaks (alone, or in addition to packages)
+          -h    show this help and exit
+
+        With no options, both system packages and Flatpaks are updated." >&2; exit 1 ;;
     esac
 done
 if ((pkg == 0 && fp == 0)); then
@@ -33,7 +41,8 @@ pkg_update() {
 
 flatpak_update() {
     printf '\n%sFLATPAK CHECK%s\n' "$B" "$N"
-    flatpak update -y
+    sudo -n true 2>/dev/null || notify-send -a uppy "sudo: a password is required"
+    sudo flatpak update -y
     printf '\n%sCLEANUP%s\n' "$B" "$N"
     sudo -n true 2>/dev/null || notify-send -a uppy "sudo: a password is required"
     sudo flatpak uninstall --unused -y
