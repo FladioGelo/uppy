@@ -34,7 +34,7 @@ sudo chmod +x /usr/local/bin/uppy
 ## Usage
 
 ```bash
-uppy
+uppy  #leave blank for defualt usage, option [-a] [-f] [-h]
 ```
 
 ## License
