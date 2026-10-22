@@ -11,11 +11,11 @@ Just a script to update your debian system with minimal manual intervention.
 
 ## Installation
 
-### From release (.deb package)
+### 📦 From release (.deb package)
 
 Download the latest release from the [Releases](https://github.com/FladioGelo/uppy/releases) page and install it
 
-### Manual installation
+### ⚙️ Manual installation
 Dependencies
 
 ```bash
