@@ -19,7 +19,7 @@ Download the latest release from the [Releases](https://github.com/FladioGelo/up
 Dependencies
 
 ```bash
-apt install nala libnotify-bin flatpak
+apt install libnotify-bin flatpak
 ```
 
 Clone the repo and copy the script into a directory in your `PATH`:
