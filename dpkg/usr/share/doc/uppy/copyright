@@ -1,9 +1,9 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: uppy
-Source: 
+Source:
 
 Files: *
-Copyright: 2026 Fladio Gelo
+Copyright: 2026 Gabriele Greco
 License: MIT
 
 License: MIT

@@ -3,51 +3,56 @@ set -eo pipefail
 
 G=$'\e[1;32m' B=$'\e[1;34m' N=$'\e[0m'
 
-pm=nala pkg=0 fp=0
-while getopts nafh opt; do
+apt=0 fp=0
+while getopts afh opt; do
     case $opt in
-        n) pm=nala pkg=1 ;;
-        a) pm=apt  pkg=1 ;;
+        a) apt=1 ;;
         f) fp=1 ;;
-        h|*) echo "Usage: ${0##*/} [-n|-a] [-f] [-h]
+        h|*) echo "Usage: ${0##*/} [-a] [-f] [-h]
 
         Options:
-          -n    use nala for system packages (default)
-          -a    use apt for system packages
-          -f    update Flatpaks (alone, or in addition to packages)
+          -a    update Debian package
+          -f    update Flatpaks
           -h    show this help and exit
 
         With no options, both system packages and Flatpaks are updated." >&2; exit 1 ;;
     esac
 done
-if ((pkg == 0 && fp == 0)); then
-    pkg=1
+if ((apt == 0 && fp == 0)); then
+    apt=1
     fp=1
 fi
 
-pkg_update() {
+sudo-check() {
+    sudo -n true 2>/dev/null || notify-send -a uppy "sudo: a password is required"
+    sudo $1
+
+}
+
+apt_update() {
     printf '\n%sAPT CHECK%s\n' "$G" "$N"
-    sudo "$pm" update
+    sudo apt update
     local n
     n=$(apt list --upgradable 2>/dev/null | grep -c upgradable || true)
     if ((n)); then
-        notify-send -a uppy "$n packages can be upgraded" & sudo "$pm" full-upgrade
+        notify-send -a uppy "$n packages can be upgraded" & sudo apt upgrade
     else
         notify-send -a uppy "No packages to upgrade"
     fi
     printf '\n%sCLEANUP%s\n' "$G" "$N"
-    sudo "$pm" clean
+    sudo-check "apt autoremove"
+    sudo apt clean
+
 }
 
 flatpak_update() {
     printf '\n%sFLATPAK CHECK%s\n' "$B" "$N"
-    sudo -n true 2>/dev/null || notify-send -a uppy "sudo: a password is required"
-    sudo flatpak update -y
+    sudo-check "--preserve-env=XDG_DATA_DIRS flatpak update -y"
     printf '\n%sCLEANUP%s\n' "$B" "$N"
-    sudo -n true 2>/dev/null || notify-send -a uppy "sudo: a password is required"
-    sudo flatpak uninstall --unused -y
+    sudo-check "flatpak uninstall --unused -y"
+
 }
 
-if ((pkg)); then pkg_update; fi
+if ((apt)); then apt_update; fi
 if ((fp)); then flatpak_update; fi
 notify-send -a uppy "Update completed :)"
