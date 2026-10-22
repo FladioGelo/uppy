@@ -6,6 +6,7 @@ Just a script to update your debian system with minimal manual intervention.
 
 - **Notifications** - runs and leave in the background, uppy notifies you when your intervention is needed
 - **Flatpak** - updates your system and Flatpak packages in one command
+- **No daemons** - oneshot script
 
 
 
