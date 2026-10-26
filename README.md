@@ -1,6 +1,6 @@
 # uppy
 
-Just a script to update your debian system with minimal manual intervention.
+The happy updater, a simple apt and flatpak wrapper script to update your system with minimal manual intervention
 
 ## Features
 
