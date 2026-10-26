@@ -40,7 +40,7 @@ apt_update() {
         notify-send -a uppy "No packages to upgrade"
     fi
     printf '\n%sCLEANUP%s\n' "$G" "$N"
-    sudo-check "apt autoremove"
+    #sudo-check "apt autoremove"
     sudo apt clean
 
 }
@@ -53,6 +53,17 @@ flatpak_update() {
 
 }
 
+autoremove-check() {
+    printf '\n%sREMOVING%s\n' "$G" "$N"
+    local n
+    n=$(apt-get -s autoremove | awk '/^Remv/ {n++} END {print n+0}')
+    if ((n)); then
+        notify-send -a uppy "$n packages can be removed" & sudo apt autoremove
+    fi
+
+}
+
 if ((apt)); then apt_update; fi
 if ((fp)); then flatpak_update; fi
+if ((apt)); then autoremove-check; fi
 notify-send -a uppy "Update completed :)"
