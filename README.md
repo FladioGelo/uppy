@@ -12,7 +12,7 @@ The happy updater, a simple apt and flatpak wrapper script to update your system
 
 ## Installation
 
-### 📦 From release (.deb package)
+### 📦 From releases (.deb package)
 
 You can download the latest release [here](https://github.com/FladioGelo/uppy/releases/latest)
 
