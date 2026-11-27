@@ -35,7 +35,16 @@ sudo chmod +x /usr/local/bin/uppy
 ## Usage
 
 ```bash
-uppy  # leave blank for default usage; options: -a, -f, -h
+uppy  # leave blank for default usage [-afy]; options: -a[-y], -f[-y], -h
+```
+```bash
+Options:
+  -a    update Debian package
+  -f    update Flatpaks
+  -h    show this help and exit
+  -y    add -y option to the previus flag (es: -afy run only flatpak update -y)
+
+With no options, both system packages and Flatpaks are updated [-afy]
 ```
 
 ## License
