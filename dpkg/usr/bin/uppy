@@ -3,25 +3,33 @@ set -eo pipefail
 
 G=$'\e[1;32m' B=$'\e[1;34m' N=$'\e[0m'
 
-apt=0 fp=0
-while getopts afh opt; do
+apt=0 fp=0 y_apt= y_fp= last=
+
+if (( $# == 0 )); then
+    set -- -afy
+fi
+
+while getopts afyh opt; do
     case $opt in
-        a) apt=1 ;;
-        f) fp=1 ;;
-        h|*) echo "Usage: ${0##*/} [-a] [-f] [-h]
+        a) apt=1; last=a ;;
+        f) fp=1; last=f ;;
+        y)
+            case $last in
+                a) y_apt=-y ;;
+                f) y_fp=-y ;;
+                *) echo "${0##*/}: -y must follow -a or -f" >&2; exit 1 ;;
+            esac ;;
+        h|*) echo "Usage: ${0##*/} [-a [-y]] [-f [-y]] [-h]
 
         Options:
           -a    update Debian package
           -f    update Flatpaks
           -h    show this help and exit
+          -y    add -y option to the previus flag (es: -ay run apt upgrade -y, -afy run only flatpak with -y)
 
-        With no options, both system packages and Flatpaks are updated." >&2; exit 1 ;;
+        With no options, both system packages and Flatpaks are updated. [-afy]" >&2; exit 1 ;;
     esac
 done
-if ((apt == 0 && fp == 0)); then
-    apt=1
-    fp=1
-fi
 
 sudo-check() {
     sudo -n true 2>/dev/null || notify-send -a uppy "sudo: a password is required"
@@ -35,7 +43,7 @@ apt_update() {
     local n
     n=$(apt list --upgradable 2>/dev/null | grep -c upgradable || true)
     if ((n)); then
-        notify-send -a uppy "$n packages can be upgraded" & sudo apt upgrade
+        notify-send -a uppy "$n packages can be upgraded" & sudo apt upgrade $y_apt
     else
         notify-send -a uppy "No packages to upgrade"
     fi
@@ -46,7 +54,8 @@ apt_update() {
 
 flatpak_update() {
     printf '\n%sFLATPAK CHECK%s\n' "$B" "$N"
-    sudo-check "--preserve-env=XDG_DATA_DIRS flatpak update -y"
+    #sudo-check "--preserve-env=XDG_DATA_DIRS flatpak update -y"
+    flatpak update $y_fp
     printf '\n%sCLEANUP%s\n' "$B" "$N"
     sudo-check "flatpak uninstall --unused -y"
 
@@ -57,7 +66,7 @@ stable-autoremove-check() {
     local n
     n=$(apt-get -s autoremove | awk '/^Remv/ {n++} END {print n+0}')
     if ((n)); then
-        notify-send -a uppy "$n packages can be removed" & sudo apt autoremove
+        notify-send -a uppy "$n packages can be removed" & sudo apt autoremove $y_apt
     else
         echo "Nothing to remove" & notify-send -a uppy "Nothing to remove"
     fi
@@ -70,4 +79,4 @@ if ((apt)); then stable-autoremove-check; fi
 notify-send -a uppy "Update completed :)"
 
 #TO-DO instead of a multiple notification for no update and nothing to remove,
-# think about a global notification
+# think about a global notification !STUPID IDEA!
